@@ -1,0 +1,26 @@
+@startuml
+@startuml name tron_txn_lc
+title TRON Transaction Lifecycle
+
+actor User
+participant Wallet
+participant "TRON Node" as Node
+participant "Cache Pool" as Cache
+participant "Super Representative" as SR
+participant TVM
+participant Blockchain
+
+User -> Wallet : Create transaction\n(type, TAPOS, fee limit)
+Wallet -> Wallet : Sign tx (ECDSA)
+Wallet -> Node : broadcast(tx)
+
+Node -> Node : Validate signature,\nresources (bandwidth/energy)
+Node -> Cache : store(tx)
+
+SR -> Cache : select tx (FIFO)
+SR -> TVM : execute(tx)
+TVM --> SR : execution result
+
+SR -> Blockchain : produce block
+Blockchain --> User : finality (~19 blocks)
+@enduml

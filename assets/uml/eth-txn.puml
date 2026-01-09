@@ -1,0 +1,27 @@
+@startuml
+@startuml name eth_txn_lc
+title Ethereum  Lifecycle 
+actor User
+participant Wallet
+participant "Ethereum Node" as Node
+participant Mempool
+participant Validator
+participant EVM
+participant Blockchain
+
+User -> Wallet : Create transaction\n{from,\nto,\ngasLimit,\nmaxFeePerGas,\nmaxPriorityFeePerGas,\nnonce,\nvalue,\ninput/data}
+Wallet -> Wallet : Sign tx (ECDSA)\naccount_signTransaction(txn_object)\nGet raw signed tx, RLP encoded
+
+Wallet -> Node : submitTransaction(tx)\nBroadcast signed transaction data\neth_sendRawTransaction(DATA,32 Bytes)
+
+
+Node -> Node : Validate signature,\nbalance, gas
+Node -> Mempool : add(tx)
+
+Validator -> Mempool : select tx (highest fee)
+Validator -> EVM : execute(tx)
+EVM --> Validator : execution result
+
+Validator -> Blockchain : include in block
+Blockchain --> User : confirmation(s)
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+@startuml name eth_vs_tron_txn
+title Ethereum vs TRON Transaction Lifecycle (Behavior Comparison)
+
+actor User
+participant Wallet
+
+participant "Ethereum Node" as EthNode
+participant "ETH Mempool" as EthPool
+participant "ETH Validator" as EthVal
+participant EVM
+participant "ETH Blockchain" as EthChain
+
+participant "TRON Node" as TronNode
+participant "TRON Cache Pool" as TronPool
+participant "Super Representative" as SR
+participant TVM
+participant "TRON Blockchain" as TronChain
+
+User -> Wallet : Create transaction
+Wallet -> Wallet : Sign (ECDSA)
+
+alt Ethereum
+    Wallet -> EthNode : submitTransaction(tx)
+    EthNode -> EthNode : Validate signature,\nnonce, balance, gas
+    EthNode -> EthPool : add(tx)
+
+    EthVal -> EthPool : select tx\n(highest priority fee)
+    EthVal -> EVM : execute(tx) «gas-based»
+    EVM --> EthVal : execution result
+
+    EthVal -> EthChain : include in block (~12s)
+    
+    loop confirmations
+        EthChain --> User : new block
+    end
+
+    note right of EthChain
+      Probabilistic finality\n(~12–15 min)
+    end note
+
+else TRON
+    Wallet -> TronNode : broadcast(tx)
+    TronNode -> TronNode : Validate signature,\nTAPOS, resources
+    TronNode -> TronPool : cache(tx)
+
+    SR -> TronPool : select tx (FIFO)
+    SR -> TVM : execute(tx) «bandwidth / energy»
+    TVM --> SR : execution result
+
+    SR -> TronChain : produce block (~3s)
+
+    note right of TronChain
+      Finality after 19 SR blocks\n(~57 seconds)
+    end note
+end
+
+@enduml
