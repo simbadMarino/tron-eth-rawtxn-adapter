@@ -1,4 +1,4 @@
-# TRON-ETH raw txn Adapter
+# TRON-ETH raw txn Adapters & Interfaces
 
 ## TLDR
 
