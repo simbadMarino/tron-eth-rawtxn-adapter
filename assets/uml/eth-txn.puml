@@ -12,7 +12,7 @@ participant Blockchain
 User -> Wallet : Create transaction\n{from,\nto,\ngasLimit,\nmaxFeePerGas,\nmaxPriorityFeePerGas,\nnonce,\nvalue,\ninput/data}
 Wallet -> Wallet : Sign tx (ECDSA)\naccount_signTransaction(txn_object)\nGet raw signed tx, RLP encoded
 
-Wallet -> Node : submitTransaction(tx)\nBroadcast signed transaction data\neth_sendRawTransaction(DATA,32 Bytes)
+Wallet -> Node : submitTransaction(tx)\nBroadcast signed transaction data\neth_sendRawTransaction(DATA, variable length)
 
 
 Node -> Node : Validate signature,\nbalance, gas
